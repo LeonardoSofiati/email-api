@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import nodemailer from 'nodemailer';
 
 
-export const contato = (req: Request, res: Response) => {
+export const contato = async (req: Request, res: Response) => {
     //Passo 1: Configurar o transporter (codigo do Mailtrap)
     let transport = nodemailer.createTransport({
         host: "smtp.mailtrap.io",
@@ -13,8 +13,19 @@ export const contato = (req: Request, res: Response) => {
         }
       });
 
-      //Passo2: Configurar a mensagem
-      
+      //Passo 2: Configurar a mensagem
+      let message = {
+        from: req.body.from,
+        to: req.body.to,
+        subject: req.body.subject,
+        html: req.body.html,
+        text: req.body.text
+      }
 
-    res.json({pong: true});
+      //Passo 3: Enviar a mensagem
+      let info = await transport.sendMail(message);
+
+      console.log('Info', info)
+
+    res.json({success: true});
 }
